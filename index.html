@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<!DOCTYPE html><html lang="fr"><head><meta name="x-poe-datastore-behavior" content="local_only">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Église La Victoire | Wonyomé, Lomé</title>
@@ -1075,64 +1075,62 @@
             background: rgba(201, 152, 44, 0.05);
         }
 
-        /* USSD Instructions */
-        .ussd-instructions {
+        /* Payment processing screen */
+        .payment-processing {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .payment-processing-spinner {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid rgba(201, 152, 44, 0.2);
+            border-top-color: var(--gold);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .payment-processing h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-processing p {
+            opacity: 0.7;
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .payment-error-box {
             background: linear-gradient(135deg, rgba(201, 152, 44, 0.08), rgba(201, 152, 44, 0.03));
             border: 1px solid rgba(201, 152, 44, 0.2);
             border-radius: 16px;
             padding: 2rem;
+            text-align: center;
             margin-bottom: 1.5rem;
         }
 
-        .ussd-instructions h5 {
+        .payment-error-box h5 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.2rem;
             font-weight: 700;
             color: var(--gold);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
-        .ussd-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .ussd-step-num {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--gold);
-            color: var(--navy-deep);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .ussd-step p {
+        .payment-error-box p {
             font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .ussd-code {
-            display: inline-block;
-            background: var(--navy);
-            color: var(--gold-light);
-            padding: 0.3rem 0.8rem;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-top: 0.3rem;
-        }
-
-        .dark .ussd-code {
-            background: var(--navy-deep);
+            opacity: 0.7;
+            line-height: 1.6;
         }
 
         .success-screen {
@@ -1681,18 +1679,21 @@
                     </button>
                 </div>
 
-                <!-- Step 3: Instructions -->
+                <!-- Step 3: Processing / Redirect -->
                 <div class="form-step" id="step3">
                     <div class="form-step-indicator">
                         <div class="step-dot"></div>
                         <div class="step-dot"></div>
                         <div class="step-dot active"></div>
                     </div>
-                    <div id="paymentInstructions"></div>
-                    <button type="button" class="btn btn-gold btn-full" id="confirmDone" style="margin-top: 1rem;">
-                        <i class="fas fa-check"></i> J'ai effectué le paiement
-                    </button>
-                    <button type="button" class="btn btn-back btn-full" id="backToStep2">
+                    <div id="paymentInstructions">
+                        <div class="payment-processing">
+                            <div class="payment-processing-spinner"></div>
+                            <h3>Redirection vers PayDunya...</h3>
+                            <p>Veuillez patienter, vous allez être redirigé vers la plateforme de paiement sécurisée.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-back btn-full" id="backToStep2" style="margin-top: 1rem;">
                         <i class="fas fa-arrow-left"></i> Retour
                     </button>
                 </div>
@@ -1760,6 +1761,9 @@
             <button type="button" class="modal-btn" onclick="closeModal()">Compris</button>
         </div>
     </div>
+
+    <!-- PayDunya Checkout SDK -->
+    <script src="https://paydunya.com/checkout/inline/js/v2/paydunya.min.js"></script>
 
     <script>
         /* ========== DARK MODE DETECTION ========== */
@@ -1859,7 +1863,6 @@
                 particles[j].update();
                 particles[j].draw();
             }
-            // Draw connections
             for (var a = 0; a < particles.length; a++) {
                 for (var b = a + 1; b < particles.length; b++) {
                     var dx = particles[a].x - particles[b].x;
@@ -1966,16 +1969,17 @@
                 showModal('Méthode requise', 'Veuillez sélectionner une méthode de paiement.');
                 return;
             }
-            showPaymentInstructions();
+            // Show loading state, then trigger PayDunya
             showStep(3);
+            showPayDunyaLoading();
+            // Small delay to let the UI update before initiating PayDunya
+            setTimeout(function() {
+                initiatePayDunya();
+            }, 600);
         });
 
         document.getElementById('backToStep2').addEventListener('click', function() {
             showStep(2);
-        });
-
-        document.getElementById('confirmDone').addEventListener('click', function() {
-            showStep(4);
         });
 
         document.getElementById('resetForm').addEventListener('click', function() {
@@ -1988,90 +1992,139 @@
             showStep(1);
         });
 
-        function showPaymentInstructions() {
-            var container = document.getElementById('paymentInstructions');
-            var amountStr = selectedAmount.toLocaleString('fr-FR');
+        function showPayDunyaLoading() {
+            var methodLabel = '';
+            if (selectedMethod === 'tmoney') { methodLabel = 'TMoney'; }
+            else if (selectedMethod === 'flooz') { methodLabel = 'Flooz'; }
+            else if (selectedMethod === 'visa') { methodLabel = 'Carte bancaire'; }
 
-            if (selectedMethod === 'tmoney') {
-                container.innerHTML =
-                    '<h3 class="form-title"><i class="fas fa-mobile-alt" style="color: #00A651;"></i> Paiement TMoney</h3>' +
-                    '<div class="ussd-instructions">' +
-                    '<h5>Suivez ces étapes :</h5>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">1</div><p>Ouvrez votre application TMoney ou composez<br><span class="ussd-code">*555#</span></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">2</div><p>Sélectionnez <strong>« Transfert d\'argent »</strong></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">3</div><p>Entrez le numéro :<br><span class="ussd-code">+228 71 64 13 44</span></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">4</div><p>Entrez le montant : <strong>' + amountStr + ' FCFA</strong></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">5</div><p>Confirmez avec votre <strong>code PIN</strong></p></div>' +
-                    '</div>' +
-                    '<p style="text-align:center; opacity:0.6; font-size:0.9rem;"><i class="fas fa-shield-alt"></i> Transaction sécurisée par Togocom</p>';
-            } else if (selectedMethod === 'flooz') {
-                container.innerHTML =
-                    '<h3 class="form-title"><i class="fas fa-mobile-alt" style="color: #0072BC;"></i> Paiement Flooz</h3>' +
-                    '<div class="ussd-instructions">' +
-                    '<h5>Suivez ces étapes :</h5>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">1</div><p>Ouvrez votre application Flooz ou composez<br><span class="ussd-code">*155#</span></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">2</div><p>Sélectionnez <strong>« Envoi d\'argent »</strong></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">3</div><p>Entrez le numéro :<br><span class="ussd-code">+228 79 86 78 79</span></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">4</div><p>Entrez le montant : <strong>' + amountStr + ' FCFA</strong></p></div>' +
-                    '<div class="ussd-step"><div class="ussd-step-num">5</div><p>Confirmez avec votre <strong>code PIN</strong></p></div>' +
-                    '</div>' +
-                    '<p style="text-align:center; opacity:0.6; font-size:0.9rem;"><i class="fas fa-shield-alt"></i> Transaction sécurisée par Moov Africa</p>';
-            } else if (selectedMethod === 'visa') {
-                container.innerHTML =
-                    '<h3 class="form-title"><i class="fas fa-credit-card" style="color: #1A1F71;"></i> Paiement par Carte</h3>' +
-                    '<div class="ussd-instructions">' +
-                    '<h5>Paiement sécurisé via PayDunya</h5>' +
-                    '<p style="margin-bottom: 1rem;">Vous allez être redirigé vers la plateforme sécurisée PayDunya pour effectuer votre paiement de <strong>' + amountStr + ' FCFA</strong> par carte Visa ou Mastercard.</p>' +
-                    '<p style="font-size: 0.9rem; opacity: 0.7;"><i class="fas fa-lock"></i> Vos informations bancaires sont protégées et ne sont jamais stockées sur notre site.</p>' +
-                    '</div>' +
-                    '<button type="button" class="btn btn-gold btn-full" onclick="initiatePayDunya()" style="margin-bottom:1rem;"><i class="fas fa-external-link-alt"></i> Payer ' + amountStr + ' FCFA via PayDunya</button>';
+            var container = document.getElementById('paymentInstructions');
+            container.innerHTML =
+                '<div class="payment-processing">' +
+                    '<div class="payment-processing-spinner"></div>' +
+                    '<h3>Redirection vers PayDunya...</h3>' +
+                    '<p>Paiement de <strong style="color: var(--gold);">' + selectedAmount.toLocaleString('fr-FR') + ' FCFA</strong> via ' + methodLabel + '.<br>Veuillez patienter...</p>' +
+                '</div>';
+        }
+
+        /* ========== PAYDUNYA INTEGRATION — ALL METHODS ========== */
+        var paydunyaSDKReady = false;
+        var paydunyaCheckInterval = null;
+
+        function checkPayDunyaSDK() {
+            if (typeof PayDunyaCheckoutSetup !== 'undefined') {
+                paydunyaSDKReady = true;
+                if (paydunyaCheckInterval) {
+                    clearInterval(paydunyaCheckInterval);
+                    paydunyaCheckInterval = null;
+                }
             }
         }
 
-        /* ========== PAYDUNYA INTEGRATION ========== */
+        // Poll for SDK readiness
+        paydunyaCheckInterval = setInterval(checkPayDunyaSDK, 300);
+        // Also check immediately
+        checkPayDunyaSDK();
+
         function initiatePayDunya() {
             var donorName = document.getElementById('donorName').value || 'Donateur anonyme';
 
-            // PayDunya Checkout Inline integration
-            if (typeof PayDunyaCheckoutSetup !== 'undefined') {
-                try {
-                    var setup = new PayDunyaCheckoutSetup({
-                        store: {
-                            name: 'Église La Victoire',
-                            tagline: 'Don pour l\'acquisition du terrain',
-                            website_url: 'https://eglise-la-victoire.netlify.app/'
-                        },
-                        checkout: {
-                            invoice: {
-                                total_amount: selectedAmount,
-                                description: 'Don de ' + donorName + ' pour Église La Victoire'
-                            }
-                        },
-                        actions: {
-                            callback_url: 'https://eglise-la-victoire.netlify.app/',
-                            return_url: 'https://eglise-la-victoire.netlify.app/',
-                            cancel_url: 'https://eglise-la-victoire.netlify.app/'
-                        }
-                    });
-
-                    setup.setPublicKey('live_public_loV6lFYGR5LPu4gWXrTwx4Yk7aX');
-                    setup.setToken('CExopgKZNb5x8I73Yngj');
-                    setup.setMode('live');
-                    setup.checkout();
-                } catch (e) {
-                    showPayDunyaFallback();
-                }
+            // Check SDK readiness, with retries
+            if (typeof PayDunyaCheckoutSetup === 'undefined') {
+                // Wait and retry up to 5 seconds
+                var retryCount = 0;
+                var maxRetries = 10;
+                var retryInterval = setInterval(function() {
+                    retryCount++;
+                    if (typeof PayDunyaCheckoutSetup !== 'undefined') {
+                        clearInterval(retryInterval);
+                        launchPayDunyaCheckout(donorName);
+                    } else if (retryCount >= maxRetries) {
+                        clearInterval(retryInterval);
+                        showPayDunyaError();
+                    }
+                }, 500);
             } else {
-                showPayDunyaFallback();
+                launchPayDunyaCheckout(donorName);
             }
         }
 
-        function showPayDunyaFallback() {
-            var amountStr = selectedAmount.toLocaleString('fr-FR');
-            showModal(
-                'Paiement par Carte',
-                'Pour payer ' + amountStr + ' FCFA par carte bancaire, veuillez contacter l\'église au +228 99 09 66 90 ou par WhatsApp pour recevoir un lien de paiement PayDunya sécurisé.'
-            );
+        function launchPayDunyaCheckout(donorName) {
+            try {
+                var methodDesc = '';
+                if (selectedMethod === 'tmoney') { methodDesc = ' (TMoney)'; }
+                else if (selectedMethod === 'flooz') { methodDesc = ' (Flooz)'; }
+                else if (selectedMethod === 'visa') { methodDesc = ' (Carte bancaire)'; }
+
+                var setup = new PayDunyaCheckoutSetup({
+                    store: {
+                        name: 'Église La Victoire',
+                        tagline: 'Don pour l\'acquisition du terrain',
+                        website_url: 'https://eglise-la-victoire.netlify.app/'
+                    },
+                    checkout: {
+                        invoice: {
+                            total_amount: selectedAmount,
+                            description: 'Don de ' + donorName + methodDesc + ' pour Église La Victoire - ' + selectedAmount.toLocaleString('fr-FR') + ' FCFA'
+                        }
+                    },
+                    actions: {
+                        callback_url: 'https://eglise-la-victoire.netlify.app/',
+                        return_url: 'https://eglise-la-victoire.netlify.app/',
+                        cancel_url: 'https://eglise-la-victoire.netlify.app/'
+                    },
+                    custom_data: {
+                        donor_name: donorName,
+                        payment_method_preferred: selectedMethod
+                    }
+                });
+
+                setup.setPublicKey('live_public_loV6lFYGR5LPu4gWXrTwx4Yk7aX');
+                setup.setToken('CExopgKZNb5x8I73Yngj');
+                setup.setMode('live');
+
+                // PayDunya handles all payment methods (TMoney, Flooz, Visa/MC)
+                // Their checkout page lets the user pay with their chosen method
+                setup.checkout();
+
+                // After checkout is called, show a "waiting" state
+                var container = document.getElementById('paymentInstructions');
+                container.innerHTML =
+                    '<div class="payment-processing">' +
+                        '<div class="payment-processing-spinner"></div>' +
+                        '<h3>Paiement en cours...</h3>' +
+                        '<p>Une fenêtre PayDunya devrait s\'ouvrir. Complétez votre paiement puis revenez ici.</p>' +
+                    '</div>' +
+                    '<button type="button" class="btn btn-gold btn-full" onclick="showStep(4)" style="margin-top: 1.5rem;">' +
+                        '<i class="fas fa-check"></i> J\'ai effectué le paiement' +
+                    '</button>' +
+                    '<button type="button" class="btn btn-back btn-full" onclick="initiatePayDunya()" style="margin-top: 0.5rem;">' +
+                        '<i class="fas fa-redo"></i> Relancer le paiement' +
+                    '</button>';
+
+            } catch (err) {
+                console.log('PayDunya error: ' + String(err));
+                showPayDunyaError();
+            }
+        }
+
+        function showPayDunyaError() {
+            var container = document.getElementById('paymentInstructions');
+            container.innerHTML =
+                '<div class="payment-error-box">' +
+                    '<h5><i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i> Erreur de connexion</h5>' +
+                    '<p>La plateforme de paiement PayDunya n\'a pas pu se charger. Cela peut être dû à votre connexion internet. Veuillez réessayer.</p>' +
+                '</div>' +
+                '<button type="button" class="btn btn-gold btn-full" onclick="retryPayDunya()" style="margin-bottom: 0.5rem;">' +
+                    '<i class="fas fa-redo"></i> Réessayer le paiement' +
+                '</button>';
+        }
+
+        function retryPayDunya() {
+            showPayDunyaLoading();
+            setTimeout(function() {
+                initiatePayDunya();
+            }, 600);
         }
 
         /* ========== SMOOTH SCROLL FOR ANCHOR LINKS ========== */
@@ -2085,10 +2138,5 @@
             });
         });
     </script>
-
-    <!-- PayDunya Checkout SDK -->
-    <script src="https://paydunya.com/checkout/inline/js/v2/paydunya.min.js" async=""></script>
-
-
 
 </body></html>
